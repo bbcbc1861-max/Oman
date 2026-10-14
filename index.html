@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
@@ -95,6 +95,53 @@
       background: rgba(255,255,255,0.08);
       border-radius: 20px;
       margin-top: 6px;
+    }
+
+    /* خارطة المراحل التفاعلية */
+    .stages-stepper {
+      display: flex;
+      justify-content: space-between;
+      margin: 15px 0 20px;
+      position: relative;
+    }
+    .stages-stepper::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 10%;
+      right: 10%;
+      height: 3px;
+      background: rgba(255,255,255,0.15);
+      z-index: 0;
+      transform: translateY(-50%);
+    }
+    .stage-step {
+      position: relative;
+      z-index: 1;
+      background: rgba(35, 18, 64, 0.95);
+      border: 2px solid rgba(255,255,255,0.2);
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 15px;
+      color: #aaa;
+      transition: all 0.3s;
+    }
+    .stage-step.active {
+      border-color: var(--accent-yellow);
+      color: #140b27;
+      background: var(--accent-yellow);
+      box-shadow: 0 0 15px var(--accent-yellow);
+      transform: scale(1.15);
+    }
+    .stage-step.completed {
+      border-color: var(--accent-green);
+      background: var(--accent-green);
+      color: #fff;
     }
 
     /* شريط الحالة (HUD) */
@@ -235,6 +282,14 @@
       background: rgba(0, 0, 0, 0.25);
       padding: 10px 18px;
       border-radius: 20px;
+    }
+    .stage-pill {
+      background: linear-gradient(135deg, var(--secondary), var(--primary));
+      color: #fff;
+      font-weight: 900;
+      font-size: 13px;
+      padding: 4px 12px;
+      border-radius: 12px;
     }
     .page-tag {
       background: linear-gradient(135deg, var(--accent-yellow), #f39c12);
@@ -444,6 +499,18 @@
     .feedback-box.show { display: block; animation: popIn 0.4s ease; }
     .feedback-box .verdict { font-size: 20px; font-weight: 900; margin-bottom: 6px; }
 
+    /* شاشة اجتياز المرحلة */
+    .level-clear-box {
+      text-align: center;
+      padding: 25px 15px;
+    }
+    .level-badge-large {
+      font-size: 55px;
+      margin-bottom: 10px;
+      display: inline-block;
+      animation: floatTrophy 2s ease-in-out infinite;
+    }
+
     .spark {
       position: fixed;
       z-index: 100;
@@ -495,7 +562,16 @@
       <div class="header-titles">
         <h1>الموسوعة العمانية للناشئة</h1>
         <h2>المجلد السادس</h2>
-        <h3>التراث الثقافي ✦ تحدي الـ 50 سؤالاً التفاعلي</h3>
+        <h3>التراث الثقافي ✦ تحدي المراحل الخمس</h3>
+      </div>
+
+      <!-- خارطة المراحل الخمس -->
+      <div class="stages-stepper" id="stages-stepper">
+        <div class="stage-step active" id="step-1">1</div>
+        <div class="stage-step" id="step-2">2</div>
+        <div class="stage-step" id="step-3">3</div>
+        <div class="stage-step" id="step-4">4</div>
+        <div class="stage-step" id="step-5">5</div>
       </div>
 
       <!-- شريط الحالة (HUD) -->
@@ -509,11 +585,11 @@
       <!-- 1. شاشة البداية واختيار الهوية -->
       <div id="screen-start" class="screen active">
         <div class="instruction-card">
-          ✨ <strong>تعليمات التحدي التراثي المطور:</strong>
-          <br>• يضم التحدي 50 سؤالاً متنوعة تشمل <strong>تطابق البطاقات الذكية</strong> و<strong>سحب الكلمات وإفلاتها</strong> إلى جانب الاختيار والتوصيل.
-          <br>• خيارات الأسئلة مخلوطة عشوائياً في كل مرة لضمان التحدي والتفكير الحقيقي.
-          <br>• كل سؤال موثق برقم صفحته من المجلد السادس لمراجعته بدقة.
-          <br>• عند إنهاء جميع الأسئلة، سيتوج اسمكِ رسمياً في <strong>لوحة الشرف</strong> مع الأوائل!
+          ✨ <strong>نظام المغامرة والتحدي عبر المراحل:</strong>
+          <br>• تنقسم المسابقة إلى <strong>5 مراحل تصاعدية</strong> (10 أسئلة لكل مرحلة).
+          <br>• لن يُفتح لكِ باب المرحلة التالية إلا باجتياز المرحلة السابقة وتأكيد إتقانها!
+          <br>• تتنوع التحديات بين تطابق البطاقات ثلاثي الأبعاد، سحب الكلمات، والاختيار من متعدد المخلوط عشوائياً.
+          <br>• عند اجتياز كل مرحلة ستُكافئين بنجوم التميز تمهيداً للتتويج النهائي في <strong>لوحة الشرف</strong>!
         </div>
 
         <div class="role-section-title">اختاري هويتكِ للانطلاق:</div>
@@ -530,7 +606,7 @@
         </div>
 
         <input type="text" id="player-name" class="input-field" placeholder="اكتبي اسمكِ الكريم للتكريم في لوحة الشرف...">
-        <button class="btn-gradient" onclick="startQuiz()">بدء المغامرة التراثية 🚀</button>
+        <button class="btn-gradient" onclick="startQuiz()">انطلاق المرحلة الأولى 🚀</button>
       </div>
 
       <!-- 2. شاشة الأسئلة التفاعلية -->
@@ -540,8 +616,8 @@
         </div>
 
         <div class="top-meta">
-          <span style="color:#e0aaff; font-size:13.5px;" id="hud-user">المتسابق: --</span>
-          <span style="color:var(--accent-cyan); font-weight:800;" id="hud-progress">سؤال 1 من 50</span>
+          <span class="stage-pill" id="hud-stage-name">المرحلة 1</span>
+          <span style="color:var(--accent-cyan); font-weight:800;" id="hud-progress">سؤال 1 في المرحلة</span>
           <span class="page-tag" id="hud-page">صفحة --</span>
         </div>
 
@@ -555,24 +631,36 @@
         <div class="feedback-box" id="feedback">
           <div class="verdict" id="verdict"></div>
           <div id="feedback-note" style="margin-bottom: 12px; font-size: 14.5px;"></div>
-          <button class="btn-gradient" style="padding:12px 28px; width:auto;" id="nextBtn" onclick="nextQuestion()">السؤال التالي ◀</button>
+          <button class="btn-gradient" style="padding:12px 28px; width:auto;" id="nextBtn" onclick="nextQuestion()">متابعة المسار ◀</button>
         </div>
       </div>
 
-      <!-- 3. شاشة النهاية ولوحة الشرف -->
+      <!-- 3. شاشة إتمام المرحلة والانتقال للتي تليها -->
+      <div id="screen-level-clear" class="screen">
+        <div class="level-clear-box">
+          <div class="level-badge-large">🌟</div>
+          <h2 style="color: var(--accent-yellow); font-size: 26px; margin-bottom: 8px;" id="level-clear-title">تم اجتياز المرحلة بنجاح!</h2>
+          <p style="font-size: 17px; color: #fff; margin-bottom: 15px;" id="level-clear-desc">أحسنتِ! لقد أظهرتِ براعة فائقة وتغلبتِ على تحديات هذه المرحلة.</p>
+          <div style="font-size: 34px; margin: 10px 0;">⭐⭐⭐</div>
+          <br>
+          <button class="btn-gradient" style="max-width:320px;" id="nextLevelBtn" onclick="proceedToNextLevel()">الانتقال للمرحلة التالية 🔓</button>
+        </div>
+      </div>
+
+      <!-- 4. شاشة النهاية ولوحة الشرف النهائية -->
       <div id="screen-finish" class="screen">
         <div class="podium-box">
           <div class="trophy-icon">🏆</div>
-          <h2 style="color: var(--accent-green); font-size: 28px; margin: 10px 0;">مبارك إتمام المسابقة!</h2>
-          <div id="final-stars" style="font-size: 42px; margin: 8px 0;">⭐⭐⭐</div>
+          <h2 style="color: var(--accent-green); font-size: 28px; margin: 10px 0;">مبارك! أنهيتِ جميع المراحل الخمس بنجاح تام</h2>
+          <div id="final-stars" style="font-size: 42px; margin: 8px 0;">👑⭐⭐⭐⭐⭐👑</div>
           <p id="final-score-text" style="font-size: 18px; color: #fff; margin-bottom: 15px;"></p>
           
           <div class="leaderboard-list">
-            <h3 style="color: var(--accent-yellow); margin-bottom: 15px; font-size: 20px;">🎖️ لوحة الشرف للأبطال 🎖️</h3>
+            <h3 style="color: var(--accent-yellow); margin-bottom: 15px; font-size: 20px;">🎖️ لوحة الشرف لخبيرات التراث العماني 🎖️</h3>
             <div id="honors-container"></div>
           </div>
           <br>
-          <button class="btn-gradient" onclick="resetQuiz()">خوض التحدي من جديد 🔄</button>
+          <button class="btn-gradient" onclick="resetQuiz()">خوض المغامرة من جديد 🔄</button>
         </div>
       </div>
 
@@ -603,6 +691,7 @@
       pick() { tone(520, 0, 0.08, 'triangle', 0.12); },
       ok() { tone(660, 0, 0.12); tone(880, 0.1, 0.12); tone(1175, 0.2, 0.22); },
       bad() { tone(220, 0, 0.18, 'sawtooth', 0.14); tone(160, 0.15, 0.25, 'sawtooth', 0.14); },
+      levelUp() { [440, 554, 659, 880].forEach((f, i) => tone(f, i * 0.1, 0.25, 'triangle', 0.22)); },
       win() { [523, 659, 784, 1047, 1319].forEach((f, i) => tone(f, i * 0.12, 0.28, 'triangle', 0.2)); }
     };
 
@@ -666,7 +755,6 @@
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
 
-    /* دالة خلط المصفوفات عشوائياً (Fisher-Yates) */
     function shuffleArray(arr) {
       const array = [...arr];
       for (let i = array.length - 1; i > 0; i--) {
@@ -677,10 +765,18 @@
     }
 
     /* =========================================================
-       3. بنك الأسئلة الشامل (50 سؤالاً)
+       3. مراحل التحدي وبنك الأسئلة (5 مراحل × 10 أسئلة)
        ========================================================= */
+    const STAGE_TITLES = [
+      "المرحلة 1: الاستكشاف التفاعلي",
+      "المرحلة 2: المأكولات التراثية الساحلية",
+      "المرحلة 3: الفنون والولائم العمانية",
+      "المرحلة 4: الوجبات الشعبية العريقة",
+      "المرحلة 5: مرحلة خبير التراث"
+    ];
+
     const questionsBank = [
-      // 1. نمط تطابق البطاقات
+      // المرحلة الأولى: (الأسئلة 1 إلى 10)
       {
         page: "373، 366، 364، 330",
         type: "تطابق البطاقات 🃏",
@@ -697,8 +793,6 @@
           { id: 4, text: "آلة موسيقية من خشب التاجيل والجلد" }
         ]
       },
-
-      // 2. نمط سحب الكلمات وإفلاتها
       {
         page: 359,
         type: "سحب وإفلات الكلمات 🖐️",
@@ -711,8 +805,6 @@
         ],
         words: ["القرش", "شهر", "الهامور", "سنة"]
       },
-
-      // 3. سحب وإفلات
       {
         page: 342,
         type: "سحب وإفلات الكلمات 🖐️",
@@ -725,8 +817,6 @@
         ],
         words: ["الخر (التمر)", "الهَروس", "الليمون", "البابلوه"]
       },
-
-      // 4. سحب وإفلات
       {
         page: 351,
         type: "سحب وإفلات الكلمات 🖐️",
@@ -739,8 +829,6 @@
         ],
         words: ["القاشع", "مقرمشة", "الروبيان", "لينة وطرية"]
       },
-
-      // 5. تطابق بطاقات
       {
         page: "340، 351، 323، 375",
         type: "تطابق البطاقات 🃏",
@@ -757,8 +845,6 @@
           { id: 4, text: "سمك مطهو يخلط مع الليمون والأرز" }
         ]
       },
-
-      // الصفحة 359: العوال (6 إلى 9)
       {
         page: 359,
         type: "صح أو خطأ",
@@ -791,8 +877,6 @@
         correctText: "البحرية المحلية",
         wrongTexts: ["المستوردة فقط", "النهرية الأجنبية"]
       },
-
-      // الصفحة 366: الكامي (10 إلى 14)
       {
         page: 366,
         type: "اختيار من متعدد",
@@ -801,6 +885,8 @@
         correctText: "اللبن الطازج (حليب الأبقار أو الإبل أو الماعز)",
         wrongTexts: ["عصير الفواكه المحلى", "السميد المغلي بالماء"]
       },
+
+      // المرحلة الثانية: (الأسئلة 11 إلى 20)
       {
         page: 366,
         type: "اختيار الإجابة الصحيحة",
@@ -833,8 +919,6 @@
         correctText: "في المناسبات والوجبات اليومية",
         wrongTexts: ["في الرحلات البحرية فقط", "عند منتصف الليل فقط"]
       },
-
-      // الصفحة 330: الهبان (15 إلى 19)
       {
         page: 330,
         type: "اختيار من متعدد",
@@ -875,8 +959,6 @@
         correctText: "حفظ الهوية الثقافية العمانية ونقل المعرفة للأجيال",
         wrongTexts: ["العزف المنفرد دون مشاركة المجتمع", "استبدال الآلات القديمة تماماً"]
       },
-
-      // الصفحة 373: المضبي (20 إلى 24)
       {
         page: 373,
         type: "اختيار من متعدد",
@@ -885,6 +967,8 @@
         correctText: "الحجارة الساخنة في حفرة في الأرض",
         wrongTexts: ["ألواح الحديد المعلق", "الفحم المضغوط في أواني الطبخ"]
       },
+
+      // المرحلة الثالثة: (الأسئلة 21 إلى 30)
       {
         page: 373,
         type: "صح أو خطأ",
@@ -917,8 +1001,6 @@
         correctText: "الحديد والزنك",
         wrongTexts: ["النحاس الصناعي", "الصوديوم المركز"]
       },
-
-      // الصفحة 342: الجولة والعسل (25 إلى 28)
       {
         page: 342,
         type: "اختيار من متعدد",
@@ -951,8 +1033,6 @@
         correctText: "الفلفل الأسود",
         wrongTexts: ["القرنفل المطحون", "مسحوق الزعفران"]
       },
-
-      // الصفحة 351: السحناة (29 إلى 32)
       {
         page: 351,
         type: "اختيار من متعدد",
@@ -969,6 +1049,8 @@
         correctText: "صح",
         wrongTexts: ["خطأ"]
       },
+
+      // المرحلة الرابعة: (الأسئلة 31 إلى 40)
       {
         page: 351,
         type: "إكمال الفراغ",
@@ -985,8 +1067,6 @@
         correctText: "حفظ الأسماك لفترة طويلة وتزويد الجسم بالبروتين",
         wrongTexts: ["زيادة السكريات الضارة", "تقليل مدة صلاحية الغذاء"]
       },
-
-      // الصفحة 323: البابلوه (33 إلى 36)
       {
         page: 323,
         type: "اختيار من متعدد",
@@ -1019,8 +1099,6 @@
         correctText: "سمك الكند والصيمة والعمومة",
         wrongTexts: ["سمك السلمون النهري", "الأسماك الزيتية المستوردة"]
       },
-
-      // الصفحة 364: البثيث (37 إلى 40)
       {
         page: 364,
         type: "اختيار من متعدد",
@@ -1054,7 +1132,7 @@
         wrongTexts: ["الاستهلاك الفردي السريع", "الاعتماد على المعلبات الخارجية"]
       },
 
-      // الصفحة 340: الثريد (41 إلى 44)
+      // المرحلة الخامسة: (الأسئلة 41 إلى 50)
       {
         page: 340,
         type: "اختيار من متعدد",
@@ -1087,8 +1165,6 @@
         correctText: "الخضروات المتنوعة",
         wrongTexts: ["الحلويات والمربى", "الفواكه المجففة"]
       },
-
-      // الصفحة 375: المعصورة (45 إلى 48)
       {
         page: 375,
         type: "اختيار من متعدد",
@@ -1121,8 +1197,6 @@
         correctText: "مصدر غني بالبروتين يساعد في بناء العضلات وتقوية العظام",
         wrongTexts: ["تزويد الجسم بنسبة عالية من الدهون المهدرجة", "تقليل نشاط الدورة الدموية"]
       },
-
-      // مراجعة ختامية (49 و 50)
       {
         page: "323، 330، 340، 351",
         type: "اختيار الإجابة الصحيحة",
@@ -1142,12 +1216,16 @@
     ];
 
     /* =========================================================
-       4. المنطق البرمجي والخلط العشوائي للأجوبة
+       4. المنطق البرمجي لإدارة المراحل الخمس
        ========================================================= */
     const LETTERS = ['أ', 'ب', 'ج', 'د'];
+    const QUESTIONS_PER_STAGE = 10;
+    const TOTAL_STAGES = 5;
+
     let selectedUserRole = "";
     let userName = "";
-    let currentQIndex = 0;
+    let currentStage = 1;      // المرحلة الحالية (1 إلى 5)
+    let currentQIndex = 0;     // رقم السؤال الكلي (0 إلى 49)
     let totalScore = 0;
     let streak = 0;
     let secs = 0;
@@ -1171,15 +1249,16 @@
       }
 
       userName = nameInput;
+      currentStage = 1;
       currentQIndex = 0;
       totalScore = 0;
       streak = 0;
       secs = 0;
 
+      updateStageStepper();
       document.getElementById('screen-start').classList.remove('active');
       document.getElementById('screen-quiz').classList.add('active');
       document.getElementById('game-hud').style.display = 'flex';
-      document.getElementById('hud-user').innerText = `المتسابق: ${userName} (${selectedUserRole})`;
 
       updateHud();
       clearInterval(timer);
@@ -1193,14 +1272,34 @@
       displayQuestion();
     }
 
+    function updateStageStepper() {
+      for (let i = 1; i <= TOTAL_STAGES; i++) {
+        const stepEl = document.getElementById(`step-${i}`);
+        stepEl.classList.remove('active', 'completed');
+        if (i < currentStage) {
+          stepEl.classList.add('completed');
+          stepEl.innerText = "✓";
+        } else if (i === currentStage) {
+          stepEl.classList.add('active');
+          stepEl.innerText = i;
+        } else {
+          stepEl.innerText = i;
+        }
+      }
+      document.getElementById('hud-stage-name').innerText = STAGE_TITLES[currentStage - 1];
+    }
+
     function displayQuestion() {
       const q = questionsBank[currentQIndex];
+      const stageQNum = (currentQIndex % QUESTIONS_PER_STAGE) + 1;
+
       document.getElementById('hud-page').innerText = `صفحة: ${q.page}`;
-      document.getElementById('hud-progress').innerText = `سؤال ${currentQIndex + 1} من ${questionsBank.length}`;
+      document.getElementById('hud-progress').innerText = `السؤال ${stageQNum} من 10 بالمرحلة`;
       document.getElementById('hud-type').innerText = `نمط: ${q.type}`;
       document.getElementById('hud-question').innerText = `${currentQIndex + 1}. ${q.question}`;
 
-      const percent = ((currentQIndex) / questionsBank.length) * 100;
+      // شريط التقدم التراكمي
+      const percent = (currentQIndex / questionsBank.length) * 100;
       document.getElementById('bar-fill').style.width = `${percent}%`;
 
       document.getElementById('feedback').classList.remove('show');
@@ -1216,18 +1315,15 @@
       }
     }
 
-    /* تجهيز نمط الاختيار العادي مع خلط كامل للمواضع */
     function renderStandard(q, stage) {
       const optionsBox = document.createElement('div');
       optionsBox.className = 'answers-container';
 
-      // دمج الخيارات وتعيين خاصية الصحة
       let items = [
         { text: q.correctText, isCorrect: true },
         ...q.wrongTexts.map(t => ({ text: t, isCorrect: false }))
       ];
 
-      // خلط عشوائي كامل للخيارات لضمان عدم ثبات موضع الإجابة الصحيحة
       items = shuffleArray(items);
 
       items.forEach((item, optIdx) => {
@@ -1253,7 +1349,6 @@
         onSuccessAnswer('أحسنتِ! إجابة صحيحة وممتازة 🎉');
       } else {
         clickedBtn.classList.add('wrong-ans');
-        // تظليل الإجابة الصحيحة الحقيقية أينما كان موضعها
         allButtons.forEach(btn => {
           if (btn.dataset.correct === "true") {
             btn.classList.add('correct-ans');
@@ -1263,7 +1358,6 @@
       }
     }
 
-    /* تجهيز نمط تطابق البطاقات */
     let memFlippedCards = [];
     let memMatchedCount = 0;
 
@@ -1273,8 +1367,6 @@
 
       const grid = document.createElement('div');
       grid.className = 'memory-grid';
-
-      // خلط بطاقات الذاكرة عشوائياً
       const shuffled = shuffleArray(q.cards);
 
       shuffled.forEach((cardItem) => {
@@ -1324,7 +1416,6 @@
       }
     }
 
-    /* تجهيز نمط سحب الكلمات */
     let currentDropTargets = {};
 
     function renderDragDrop(q, stage) {
@@ -1345,7 +1436,6 @@
       const wordsBox = document.createElement('div');
       wordsBox.className = 'draggables-container';
 
-      // خلط بنك الكلمات عشوائياً
       const shuffledWords = shuffleArray(q.words);
       shuffledWords.forEach(w => {
         const wBtn = document.createElement('div');
@@ -1439,16 +1529,51 @@
       updateHud();
       feedbackBox.classList.add('show');
 
-      document.getElementById('nextBtn').innerText = (currentQIndex === questionsBank.length - 1) ? 'عرض التتويج ولوحة الشرف 🏆' : 'السؤال التالي ◀';
+      const isEndOfStage = ((currentQIndex + 1) % QUESTIONS_PER_STAGE === 0);
+      if (currentQIndex === questionsBank.length - 1) {
+        document.getElementById('nextBtn').innerText = 'تتويج الأبطال ولوحة الشرف 🏆';
+      } else if (isEndOfStage) {
+        document.getElementById('nextBtn').innerText = `اختتام ${STAGE_TITLES[currentStage - 1]} 🌟`;
+      } else {
+        document.getElementById('nextBtn').innerText = 'السؤال التالي ◀';
+      }
     }
 
     function nextQuestion() {
-      currentQIndex++;
-      if (currentQIndex < questionsBank.length) {
-        displayQuestion();
+      const isEndOfStage = ((currentQIndex + 1) % QUESTIONS_PER_STAGE === 0);
+
+      if (isEndOfStage) {
+        if (currentStage < TOTAL_STAGES) {
+          showLevelClearScreen();
+        } else {
+          showHonorPodium();
+        }
       } else {
-        showHonorPodium();
+        currentQIndex++;
+        displayQuestion();
       }
+    }
+
+    function showLevelClearScreen() {
+      document.getElementById('screen-quiz').classList.remove('active');
+      document.getElementById('screen-level-clear').classList.add('active');
+      sfx.levelUp();
+      confetti();
+
+      document.getElementById('level-clear-title').innerText = `مبارك! أتممتِ ${STAGE_TITLES[currentStage - 1]}`;
+      document.getElementById('level-clear-desc').innerText = 
+        `يا ${userName}، أنجزتِ 10 أسئلة بنجاح. استعدي لفتح أبواب ${STAGE_TITLES[currentStage]}!`;
+    }
+
+    function proceedToNextLevel() {
+      currentStage++;
+      currentQIndex++;
+      updateStageStepper();
+
+      document.getElementById('screen-level-clear').classList.remove('active');
+      document.getElementById('screen-quiz').classList.add('active');
+
+      displayQuestion();
     }
 
     function updateHud() {
@@ -1466,25 +1591,25 @@
       for (let i = 0; i < 5; i++) setTimeout(confetti, i * 250);
 
       document.getElementById('final-score-text').innerHTML = 
-        `يا <strong>${userName}</strong> (${selectedUserRole})، حصدتِ <strong>${totalScore}</strong> نقطة في زمن قدره <strong>${document.getElementById('hud-timer').innerText}</strong>!`;
+        `يا <strong>${userName}</strong> (${selectedUserRole})، حصدتِ <strong>${totalScore}</strong> نقطة واجتزتِ <strong>كافة المراحل الـ 5</strong> في زمن قدره <strong>${document.getElementById('hud-timer').innerText}</strong>!`;
 
       const honorBox = document.getElementById('honors-container');
       honorBox.innerHTML = `
         <div class="board-item rank-1">
           <span>🥇 ${userName} (${selectedUserRole})</span>
-          <span>${totalScore} نقطة ⭐</span>
+          <span>${totalScore} نقطة ⭐ (5/5 مراحل)</span>
         </div>
         <div class="board-item">
           <span>🥈 مريم البلوشية (طالبة مجيدة)</span>
-          <span>500 نقطة</span>
+          <span>500 نقطة (5 مراحل)</span>
         </div>
         <div class="board-item">
           <span>🥉 أ. فاطمة المعمرية (معلّمة التراث)</span>
-          <span>480 نقطة</span>
+          <span>480 نقطة (5 مراحل)</span>
         </div>
         <div class="board-item">
           <span>🌸 سالم الهنائي (وليّ أمر داعم)</span>
-          <span>460 نقطة</span>
+          <span>460 نقطة (5 مراحل)</span>
         </div>
       `;
     }
@@ -1494,6 +1619,8 @@
       document.getElementById('screen-start').classList.add('active');
       document.getElementById('game-hud').style.display = 'none';
       document.getElementById('player-name').value = '';
+      currentStage = 1;
+      updateStageStepper();
     }
 
     function sparkle(el) {
